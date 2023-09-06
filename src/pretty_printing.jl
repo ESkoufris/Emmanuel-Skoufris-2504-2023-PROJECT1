@@ -1,12 +1,19 @@
 import Base: show
 
-function show(p::Polynomial) 
-    println(io, r.numerator)
-    num_chars = max(length(string(r.numerator)),length(string(r.denominator)))
-    println(io,"-"^num_chars)
-    println(io,r.denominator)
+function show(io::IO, p::Polynomial) 
+    if iszero(p)
+        print(io,"0")
+    else
+        n = length(p.terms)
+        for (i,t) in enumerate(p.terms)
+            if !iszero(t)
+                print(io, t, i != n ? " + " : "")
+            end
+        end
+    end
 end
 
 
+p1 = 5*x_poly()
 
-
+@show p1.terms
