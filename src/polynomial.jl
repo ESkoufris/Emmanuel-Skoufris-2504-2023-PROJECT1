@@ -124,16 +124,14 @@ end
 """
 Show a polynomial.
 """
-function show(io::IO, p::Polynomial) 
-    if iszero(p)
-        print(io,"0")
-    else
-        n = length(p.terms)
-        for (i,t) in enumerate(p.terms)
-            if !iszero(t)
-                print(io, t, i != n ? " + " : "")
-            end
-        end
+# modified @show for polynomials  
+function show(io::IO, t::Term)  
+    iszero(t.coeff) && return print(io,"0")
+    iszero(t.degree) && return print(io,t.coeff)
+    if abs(t.coeff) == 1
+        print(io, t.coeff == 1 ? "x" : "-x", t.degree == 1 ? "" : "^$(t.degree)") 
+    else 
+        print(io, "$(t.coeff)x", t.degree == 1 ? "" : "^$(t.degree)")
     end
 end
 
