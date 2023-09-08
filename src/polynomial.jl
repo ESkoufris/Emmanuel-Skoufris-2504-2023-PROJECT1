@@ -122,17 +122,25 @@ end
 ###########
 
 """
-Show a polynomial.
+Shows a polynomial.
 """
-# modified @show for polynomials  
-function show(io::IO, t::Term)  
-    iszero(t.coeff) && return print(io,"0")
-    iszero(t.degree) && return print(io,t.coeff)
-    if abs(t.coeff) == 1
-        print(io, t.coeff == 1 ? "x" : "-x", t.degree == 1 ? "" : "^$(t.degree)") 
-    else 
-        print(io, "$(t.coeff)x", t.degree == 1 ? "" : "^$(t.degree)")
+
+# By default, print from highest to lowest powers. 
+global lowest_to_highest = false
+
+# modified show for polynomials  
+function show(io::IO, p::Polynomial) 
+
+    if iszero(p)
+        print(io,"0")
+    else
+        n = length(p.terms)
+        (hasproperty(Main, :lowest_to_highest) && lowest_to_highest) ?  p_terms = p.terms  : p_terms = reverse(p.terms)
+        for (i,t) in enumerate([y for y in p_terms if !iszero(y)])
+            print(io, i==1 ? "$t" : (t.coeff ≥ 0 ? " + $t" : " - $(-t)"))
+        end
     end
+    
 end
 
 ##############################################

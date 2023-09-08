@@ -37,17 +37,47 @@ one(::Type{Term})::Term = Term(1,0)
 ###########
 
 """
+Unicode superscript.
+"""
+
+function superscript(n::Int)
+
+    digit_to_unicode = Dict(
+        '0' => 0x2070,
+        '1' => 0x00B9,
+        '2' => 0x00B2,
+        '3' => 0x00B3,
+        '4' => 0x2074,
+        '5' => 0x2075,
+        '6' => 0x2076,
+        '7' => 0x2077,
+        '8' => 0x2078,
+        '9' => 0x2079 
+    )
+
+    n_str = string(n)
+
+    unicode_str = ""
+
+    for i in n_str
+        unicode_digit = Char(digit_to_unicode[i])
+        unicode_str *= unicode_digit
+    end
+
+    return unicode_str
+end
+
+"""
 Show a term.
 """
 
-# modified @show for terms
 function show(io::IO, t::Term)  
     iszero(t.coeff) && return print(io,"0")
     iszero(t.degree) && return print(io,t.coeff)
     if abs(t.coeff) == 1
-        print(io, t.coeff == 1 ? "x" : "-x", t.degree == 1 ? "" : "^$(t.degree)") 
+        print(io, t.coeff == 1 ? "x" : "-x", t.degree == 1 ? "" : superscript(t.degree)) 
     else 
-        print(io, "$(t.coeff)x", t.degree == 1 ? "" : "^$(t.degree)")
+        print(io, "$(t.coeff)x", t.degree == 1 ? "" : superscript(t.degree))
     end
 end
 
