@@ -20,7 +20,8 @@ struct Polynomial
     #until the degree of the polynomial. The leading term (i.e. last) is assumed to be non-zero except 
     #for the zero polynomial where the vector is of length 1.
     #Note: at positions where the coefficient is 0, the power of the term is also 0 (this is how the Term type is designed)
-    terms::Vector{Term}   
+    terms::Vector{Term} 
+    dict::  
     
     #Inner constructor of 0 polynomial
     Polynomial() = new([zero(Term)])

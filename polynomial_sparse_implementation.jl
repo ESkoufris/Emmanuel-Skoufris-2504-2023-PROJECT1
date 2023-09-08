@@ -1,41 +1,17 @@
-using DataStructures
+using Pkg
+Pkg.activate(".")
 
-lst = MutableLinkedList{Int}()
-
-typeof(lst)
-
-isempty(lst)
-
-append!(lst, 24)
-
-append!(lst, 10)
-
-lst[2]
-
-lst.node 
-
-lst.node
-
-lst = MutableLinkedList{Int}(1,2,3,4)
-
-lst
-
-lst.node.next.next.next.prev
-
-delete!(lst, length(lst))
+include("poly_factorization_project.jl")
 
 include("sorted_linked_list.jl")
 
-l = MutableLinkedList{String}()
 
-d = Dict{Int64, DataStructures.ListNode{String}}()
+using DataStructures
 
-insert_sorted!(l, d, 87, "hello")
 
-l
-
-d[87]
-
+"""
+A Polynomial type - designed to be for polynomials with integer coefficients.
+"""
 
 struct PolynomialSparse
 
@@ -44,10 +20,9 @@ struct PolynomialSparse
     #until the degree of the polynomial. The leading term (i.e. last) is assumed to be non-zero except 
     #for the zero polynomial where the vector is of length 1.
     #Note: at positions where the coefficient is 0, the power of the term is also 0 (this is how the Term type is designed)
-    terms::Vector{Term} 
-    
-   
-    
+    terms::MutableLinkedList{Term}
+    dict::
+
     #Inner constructor of 0 polynomial
     PolynomialSparse() = new([zero(Term)])
 
@@ -61,29 +36,21 @@ struct PolynomialSparse
         end
 
         dict = Dict{Int, DataStructures.ListNode{Term}}()
+        terms = MutableLinkedList{Term}()
         max_degree = maximum((t)->t.degree, vt)
-        lst = MutableLinkedList{Term}()
 
         #now update based on the input terms
-        for i in 1:max_degree
+        for t in vt
             value = vt[i]
-            insert_sorted!(lst, dict, i-1, value) #+1 accounts for 1-indexing
+            insert_sorted!(terms, dict, t.degree, t) #+1 accounts for 1-indexing
         end
-        return new(terms)
+        return new(terms, dict)
     end
 end
 
-PolynomialSparse()
-
-lst = MutableLinkedList{Term}([zero(Term) for _ in 1:5]...)
+"""
+Construct a polynomial with a single term.
+"""
 PolynomialSparse(t::Term) = PolynomialSparse([t])
 
 PolynomialSparse(Term(1,1))
-
-for t in lst 
-    print("hi", "\t")
-end 
-
-lst[5]
-
-
