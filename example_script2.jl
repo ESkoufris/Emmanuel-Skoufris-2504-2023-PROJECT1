@@ -48,9 +48,7 @@ get_element(x.terms, x.dict, 1)
 
 derivative(Term(1,2))
 
-derivative(PolynomialSparse([Term(1,2), Term(2,3)]))
-
-
+derivative(PolynomialSparse([Term(1,2), Term(2,3), Term(5,60)])).dict
 
 pop!(x)
 
