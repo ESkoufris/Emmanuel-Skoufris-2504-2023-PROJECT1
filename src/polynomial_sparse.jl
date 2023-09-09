@@ -17,9 +17,9 @@ struct PolynomialSparse
     dict::Dict{Int, DataStructures.ListNode{Term}}
 
     #Inner constructor of 0 polynomial
-    PolynomialSparse() = new([zero(Term)])
+    PolynomialSparse() = new(MutableLinkedList{Term}(Term(0,0)), Dict{Int, DataStructures.ListNode{Term}}())
 
-    #Inner constructor of polynomial based on arbitrary list of terms
+    #Inner constructor of sparse polynomial based on arbitrary list of terms
     function PolynomialSparse(vt::Vector{Term})
 
         #Filter the vector so that there is not more than a single zero term
@@ -32,21 +32,18 @@ struct PolynomialSparse
         terms = MutableLinkedList{Term}()
         max_degree = maximum((t)->t.degree, vt)
 
-        #now update based on the input terms
+        #filling up the mutable linked list with the terms and the dictionary containing the degrees
         for t in vt
-            insert_sorted!(terms, dict, t.degree, t) #+1 accounts for 1-indexing
+            insert_sorted!(terms, dict, t.degree, t) 
         end
         return new(terms, dict)
     end
+
+  #=   function PolynomialSparse(p::MutableLinkedList{Term}, d::Dict{Int, DataStructures.ListNode{Term}})
+        PolynomialSparse([get_element(p.terms, p.dict, term.degree) for term in p.terms])
+    end =#
+
 end
-
-# Example operations 
-
-#= 
-PolynomialSparse(x_poly().terms)
-
-pop!(PolynomialSparse([Term(1,1), Term(1,2), Term(-1,4)]).terms) =#
-
 
 """
 This function maintains the invariant of the Polynomial type so that there are no zero terms beyond the highest
@@ -178,7 +175,7 @@ leading(p::PolynomialSparse)::Term = isempty(p.terms) ? zero(Term) : last(p.term
 """
 Returns the coefficients of the polynomial.
 """
-coeffs(p::PolynomialSparse)::Vector{Int} = [t.coeff for t in p]
+coeffs(p::PolynomialSparse)::Vector{Int} = [t.coeff for t in p.terms]
 
 """
 The degree of the polynomial.
@@ -193,7 +190,7 @@ content(p::PolynomialSparse)::Int = euclid_alg(coeffs(p))
 """
 Evaluate the polynomial at a point `x`.
 """
-evaluate(f::PolynomialSparse, x::T) where T <: Number = sum(evaluate(t,x) for t in f)
+evaluate(f::PolynomialSparse, x::T) where T <: Number = sum(evaluate(t,x) for t in f.terms)
 
 ################################
 # Pushing and popping of terms #
@@ -206,15 +203,14 @@ Push a new term into the polynomial.
 function push!(p::PolynomialSparse, t::Term) 
     if t.degree <= degree(p)
         p.terms[t.degree + 1] = t
-        p.dict[t.degree] =  t
+        # this part had to change to accomodate for the dictionary
+        p.dict[t.degree] =  DataStructures.ListNode{Term}(t)
     else
         # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
         insert_sorted!(p.terms, p.dict, t.degree, t)
     end
     return p        
 end
-
-push!(x_polysparse(), Term(1,2))
 
 """
 Pop the leading term out of the polynomial. When polynomial is 0, keep popping out 0.
@@ -236,12 +232,12 @@ end
 """
 Check if the polynomial is zero.
 """
-iszero(p::PolynomialSparse)::Bool = p.terms == [Term(0,0)]
+iszero(p::PolynomialSparse)::Bool = p.terms == MutableLinkedList{Term}(Term(0,0))
 
 """
 The negative of a polynomial.
 """
--(p::PolynomialSparse) = PolynomialSparse(map((pt)->-pt, p.terms))
+-(p::PolynomialSparse) = PolynomialSparse(map((pt)->-pt, [get_element(p.terms, p.dict, t.degree) for t in p.terms]))
 
 """
 Create a new polynomial which is the derivative of the polynomial.
@@ -250,7 +246,7 @@ function derivative(p::PolynomialSparse)::PolynomialSparse
     der_p = PolynomialSparse()
     for term in p.terms
         der_term = derivative(term)
-        !iszero(der_term) && push!(der_p,der_term)
+        !iszero(der_term) && push!(der_p, der_term)
     end
     return trim!(der_p)
 end
@@ -258,7 +254,9 @@ end
 """
 The prim part (multiply a polynomial by the inverse of its content).
 """
-prim_part(p::PolynomialSparse) = p ÷ content(p)
+
+#Need to fix this
+prim_part(p::PolynomialSparse) = p.terms ÷ content(p)
 
 
 """
@@ -273,7 +271,7 @@ square_free(p::Polynomial, prime::Int)::Polynomial = (p ÷ gcd(p,derivative(p),p
 """
 Check if two polynomials are the same
 """
-==(p1::Polynomial, p2::Polynomial)::Bool = p1.terms == p2.terms
+==(p1::PolynomialSparse, p2::PolynomialSparse)::Bool = p1.terms == p2.terms
 
 
 """
@@ -289,27 +287,37 @@ Check if a polynomial is equal to 0.
 """
 Subtraction of two polynomials.
 """
--(p1::Polynomial, p2::Polynomial)::Polynomial = p1 + (-p2)
+-(p1::PolynomialSparse, p2::PolynomialSparse)::PolynomialSparse = p1 + (-p2)
 
 
 """
 Multiplication of polynomial and term.
 """
-*(t::Term, p1::Polynomial)::Polynomial = iszero(t) ? Polynomial() : Polynomial(map((pt)->t*pt, p1.terms))
-*(p1::Polynomial, t::Term)::Polynomial = t*p1
+
+function *(t::Term, p::PolynomialSparse)::PolynomialSparse 
+
+    if iszero(t) 
+       PolynomialSparse() 
+    else
+        PolynomialSparse(map((pt)->t*pt, [get_element(p.terms, p.dict, term.degree) for term in p.terms]))
+    end
+
+end
+
+*(p1::PolynomialSparse, t::Term)::PolynomialSparse = t*p1
 
 """
 Multiplication of polynomial and an integer.
 """
-*(n::Int, p::Polynomial)::Polynomial = p*Term(n,0)
-*(p::Polynomial, n::Int)::Polynomial = n*p
+*(n::Int, p::PolynomialSparse)::PolynomialSparse = p*Term(n,0)
+*(p::PolynomialSparse, n::Int)::PolynomialSparse = n*p
 
 """
 Integer division of a polynomial by an integer.
 
 Warning this may not make sense if n does not divide all the coefficients of p.
 """
-÷(p::Polynomial, n::Int) = (prime)->Polynomial(map((pt)->((pt ÷ n)(prime)), p.terms))
+÷(p::PolynomialSparse, n::Int) = (prime)->Polynomial(map((pt)->((pt ÷ n)(prime)), p.terms))
 
 """
 Take the mod of a polynomial with an integer.
