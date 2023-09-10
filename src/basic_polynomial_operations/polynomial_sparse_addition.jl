@@ -46,4 +46,5 @@ end
 Add a polynomial and an integer.
 """
 +(p::PolynomialSparse, n::Int) = p + Term(n,0)
+-(p::PolynomialSparse, n::Int) = p - Term(n,0)
 +(n::Int, p::PolynomialSparse) = p + Term(n,0)

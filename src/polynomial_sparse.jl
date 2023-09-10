@@ -266,7 +266,7 @@ prim_part(p::PolynomialSparse) = p.terms ÷ content(p)
 """
 A square free polynomial.
 """
-square_free(p::Polynomial, prime::Int)::Polynomial = (p ÷ gcd(p,derivative(p),prime))(prime)
+square_free(p::PolynomialSparse, prime::Int)::PolynomialSparse = (p ÷ gcd(p,derivative(p),prime))(prime)
 
 #################################
 # Queries about two polynomials #
@@ -334,7 +334,6 @@ function mod(f::PolynomialSparse, p::Int)::PolynomialSparse
     return trim!(f_out)
          =#
 
-    #preferred implementation for PolynomialSparse
     p_out = PolynomialSparse()
     for t in f.terms
         new_term = mod(t, p)
