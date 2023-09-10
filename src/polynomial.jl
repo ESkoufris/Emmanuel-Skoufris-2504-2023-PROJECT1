@@ -301,7 +301,7 @@ Integer division of a polynomial by an integer.
 
 Warning this may not make sense if n does not divide all the coefficients of p.
 """
-÷(p::Polynomial, n::Int) = (prime)->Polynomial(map((pt)->((pt ÷ n)(prime)), p.terms))
+÷(p::Polynomial, n::Int) = (prime) -> Polynomial(map((pt)->((pt ÷ n)(prime)), p.terms))
 
 """
 Take the mod of a polynomial with an integer.

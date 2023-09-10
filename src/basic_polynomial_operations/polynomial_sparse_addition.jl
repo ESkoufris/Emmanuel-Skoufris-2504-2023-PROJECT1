@@ -37,6 +37,11 @@ function +(p1::PolynomialSparse, p2::PolynomialSparse)::PolynomialSparse
     return p
 end
 
+-(p1::PolynomialSparse, t::Term)::PolynomialSparse = p1 + (-t)
+-(p1::PolynomialSparse, p2::PolynomialSparse)::PolynomialSparse = p1 + - p2
+
+-(t::Term, p1::PolynomialSparse)::PolynomialSparse = -p1 + t
+
 """
 Add a polynomial and an integer.
 """

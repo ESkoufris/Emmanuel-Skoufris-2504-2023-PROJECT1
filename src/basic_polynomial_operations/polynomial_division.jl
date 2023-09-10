@@ -42,3 +42,4 @@ The quotient from polynomial division. Returns a function of an integer.
 The remainder from polynomial division. Returns a function of an integer.
 """
 rem(num::Polynomial, den::Polynomial)  = (p::Int) -> last(divide(num,den)(p))
+ 

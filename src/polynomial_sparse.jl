@@ -34,7 +34,12 @@ struct PolynomialSparse
 
         #filling up the mutable linked list with the terms and the dictionary containing the degrees
         for t in vt
-            insert_sorted!(terms, dict, t.degree, t) 
+            if haskey(dict, t.degree)
+               delete_element!(terms, dict, t.degree)
+               insert_sorted!(terms, dict, t.degree, t) 
+            else 
+                insert_sorted!(terms, dict, t.degree, t)
+            end
         end
         return new(terms, dict)
     end
@@ -44,6 +49,7 @@ struct PolynomialSparse
     end =#
 
 end
+
 
 """
 This function maintains the invariant of the Polynomial type so that there are no zero terms beyond the highest
@@ -201,10 +207,9 @@ Push a new term into the polynomial.
 """
 #Note that ideally this would throw and error if pushing another term of degree that is already in the polynomial
 function push!(p::PolynomialSparse, t::Term) 
-    if t.degree <= degree(p)
-        p.terms[t.degree + 1] = t
-        # this part had to change to accomodate for the dictionary
-        p.dict[t.degree] =  DataStructures.ListNode{Term}(t)
+    if haskey(p.dict, t.degree) 
+       delete_element!(p.terms, p.dict, t.degree)
+       insert_sorted!(p.terms, p.dict, t.degree, t)
     else
         # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
         insert_sorted!(p.terms, p.dict, t.degree, t)
@@ -237,7 +242,7 @@ iszero(p::PolynomialSparse)::Bool = p.terms == MutableLinkedList{Term}(Term(0,0)
 """
 The negative of a polynomial.
 """
--(p::PolynomialSparse) = PolynomialSparse(map((pt)->-pt, [get_element(p.terms, p.dict, t.degree) for t in p.terms]))
+-(p::PolynomialSparse) = PolynomialSparse(map((y)->-y, [get_element(p.terms, p.dict, t.degree) for t in p.terms]))
 
 """
 Create a new polynomial which is the derivative of the polynomial.
@@ -255,7 +260,6 @@ end
 The prim part (multiply a polynomial by the inverse of its content).
 """
 
-#Need to fix this
 prim_part(p::PolynomialSparse) = p.terms ÷ content(p)
 
 
@@ -278,7 +282,7 @@ Check if two polynomials are the same
 Check if a polynomial is equal to 0.
 """
 #Note that in principle there is a problem here. E.g The polynomial 3 will return true to equalling the integer 2.
-==(p::Polynomial, n::T) where T <: Real = iszero(p) == iszero(n)
+==(p::PolynomialSparse, n::T) where T <: Real = iszero(p) == iszero(n)
 
 ##################################################################
 # Operations with two objects where at least one is a polynomial #
@@ -317,31 +321,33 @@ Integer division of a polynomial by an integer.
 
 Warning this may not make sense if n does not divide all the coefficients of p.
 """
-÷(p::PolynomialSparse, n::Int) = (prime)->Polynomial(map((pt)->((pt ÷ n)(prime)), p.terms))
+÷(p::PolynomialSparse, n::Int) = (prime) -> PolynomialSparse(map((pt)->((pt ÷ n)(prime)),  [get_element(p.terms, p.dict, term.degree) for term in p.terms]))
 
 """
 Take the mod of a polynomial with an integer.
 """
-function mod(f::Polynomial, p::Int)::Polynomial
-    f_out = deepcopy(f)
+function mod(f::PolynomialSparse, p::Int)::PolynomialSparse
+    #= f_out = deepcopy(f)
     for i in 1:length(f_out.terms)
         f_out.terms[i] = mod(f_out.terms[i], p)
     end
     return trim!(f_out)
-        
-    # p_out = Polynomial()
-    # for t in f
-    #     new_term = mod(t, p)
-    #     @show new_term
-    #     push!(p_out, new_term)
-    # end
-    # return p_out
+         =#
+
+    #preferred implementation for PolynomialSparse
+    p_out = PolynomialSparse()
+    for t in f.terms
+        new_term = mod(t, p)
+        @show new_term
+        push!(p_out, new_term)
+    end
+    return p_out
 end
 
 """
 Power of a polynomial mod prime.
 """
-function pow_mod(p::Polynomial, n::Int, prime::Int)
+function pow_mod(p::PolynomialSparse, n::Int, prime::Int)
     n < 0 && error("No negative power")
     out = one(p)
     for _ in 1:n
@@ -350,6 +356,5 @@ function pow_mod(p::Polynomial, n::Int, prime::Int)
     end
     return out
 end
-
 
 

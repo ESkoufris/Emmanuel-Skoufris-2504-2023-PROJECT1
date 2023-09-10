@@ -29,3 +29,4 @@ function ^(p::PolynomialSparse, n::Int)
     end
     return out
 end
+

@@ -4,7 +4,7 @@ Pkg.activate(".")
 include("poly_factorization_project.jl")
 
 
-x = x_poly()
+x = x_polysparse()
 
 @show -4x^2 + 6x + 1 - 6x^3 - 5x^1 - 9089x^5
 @show 0*x + 5x^2 + 0*x^3 - 7x^4
@@ -81,7 +81,7 @@ iszero(PolynomialSparse())
 
 x^4 
 
-Polynomial(x.terms, x.dict)
+
 
 x
 derivative(PolynomialSparse([Term(4,5), Term(-3,6)]))
@@ -91,3 +91,41 @@ t = Term(1,1)
 
 PolynomialSparse(map((pt)->t*pt, [get_element(p.terms, p.dict, term.degree) for term in p.terms]))
 
+
+
+
+
+u = 2x^4 + 3x^2 + 2
+v = 3x+2 
+
+
+f = (2x^4 + 3x^2 + 4x ) ÷ (3x+2)
+
+mod(v, 2)
+
+(x ÷ x)(6)
+
+u - u*v
+
+÷(u,v)(5)
+
+(u ÷ v)(5)
+(u ÷ v)(5)
+
+x = x_poly()
+u = 2x^4 + 3x^2 + 2
+v = 3x+2
+
+h = PolynomialSparse( (leading(u) ÷ leading(v))(5) )  
+#syzergy 
+h.dict
+(2x).dict
+
+
+f = mod(u + - h*v, 5)
+
+u - u*v
+
+iszero(mod((u + f) + - u*v, 5))
+
+x = x_polysparse()
