@@ -23,15 +23,17 @@ function divide(num::PolynomialSparse, den::PolynomialSparse)
         prev_degree = degree(f)
         while degree(f) ≥ degree(g) 
             h = PolynomialSparse( (leading(f) ÷ leading(g))(p) )  #syzergy 
-            f = mod((f + - h*g), p)
+            f = mod((f - h*g), p)
             q = mod((q + h), p)  
             prev_degree == degree(f) && break
             prev_degree = degree(f)
         end
+        @assert iszero( mod((num  - (q*g + f)),p))
         return q, f
     end
     return division_function
 end
+
 
 """
 The quotient from polynomial division. Returns a function of an integer.

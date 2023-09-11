@@ -14,9 +14,9 @@
 A term.
 """
 struct Term  #structs are immutable by default
-    coeff::Int
-    degree::Int
-    function Term(coeff::Int, degree::Int)
+    coeff
+    degree
+    function Term(coeff, degree) 
         degree < 0 && error("Degree must be non-negative")
         coeff != 0 ? new(coeff,degree) : new(coeff,0)
     end
