@@ -13,7 +13,9 @@
 """
 A PolynomialDenseDense type - designed to be for polynomials with integer coefficients.
 """
-struct PolynomialDense
+
+
+struct PolynomialDense 
 
     #A zero packed vector of terms
     #Terms are assumed to be in order with first term having degree 0, second degree 1, and so fourth

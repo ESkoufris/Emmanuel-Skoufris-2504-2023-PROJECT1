@@ -27,6 +27,12 @@ prod_derivative_test_poly()
 ext_euclid_test_poly()
 division_test_poly()
 
+include("polynomial_sparse_tests.jl")
+prod_test_poly_sparse()
+prod_derivative_test_poly_sparse()
+ext_euclid_test_poly_sparse()
+division_test_poly_sparse()
+
 ####
 # Execute unit tests for polynomial factorization
 ####

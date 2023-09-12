@@ -54,4 +54,44 @@ v = 4x + 1
 gcd(u, v, 5)
 typeof(Term128(1,2).coeff)
 
+extended_euclid_alg(x,x,5)
 
+y = x_poly()
+
+extended_euclid_alg(y,y,1)
+
+factor(p,5)
+
+p = x^2 + 1
+q = x + 3
+
+factor(p, 5)
+
+prim_part(p)(5)
+
+content(p)
+
+(p ÷ 3)(5)
+
+typeof((Term(1,1) ÷ 2)(5))
+
+(p ÷ content(p))
+
+prim_part(x)(5)
+
+(p ÷ q)(5)
+
+typeof(p)
+
+u = x^2 + 1
+v = x + 2
+
+(u ÷ v)(5)
+
+typeof(PolynomialSparse(Term(1,1)))
+
+typeof(x.terms[1].degree)
+
+Term128(Term(1,1) + Term(1,1))
+
+x*Term(1,1)

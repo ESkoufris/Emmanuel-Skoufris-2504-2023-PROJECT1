@@ -16,23 +16,26 @@ A term.
 struct Term  #structs are immutable by default
     coeff::Integer
     degree::Integer
-    function Term(coeff, degree) 
+    function Term(coeff::Integer, degree::Integer) 
         degree < 0 && error("Degree must be non-negative")
         coeff != 0 ? new(coeff,degree) : new(coeff,0)
     end
 end
-
-Term128(n,k) = Term(Int128(n), Int128(k))
-
 """
 Creates the zero term.
 """
-zero(::Type{Term})::Term = Term(0,0)
+
+zero(::Type) = Term(0,0)
+zero(::Type)::Term = Term(0,0)
+
+Term128(n,k) = Term(Int128(n), Int128(k))
+Term128(t::Term) = Term128(t.coeff, t.degree)
 
 """
 Creates the unit term.
 """
-one(::Type{Term})::Term = Term(1,0)
+one(::Type) = Term(1,0)
+one(::Type)::Term = Term(1,0)
 
 ###########
 # Display #

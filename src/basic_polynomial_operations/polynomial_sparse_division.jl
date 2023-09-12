@@ -38,7 +38,7 @@ end
 """
 The quotient from polynomial division. Returns a function of an integer.
 """
-÷(num::PolynomialSparse, den::PolynomialSparse)  = (p::Int) -> (divide(num,den)(p))
+÷(num::PolynomialSparse, den::PolynomialSparse) = (p::Int) -> first(divide(num,den)(p))
 
 """
 The remainder from polynomial division. Returns a function of an integer.

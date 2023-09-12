@@ -26,6 +26,7 @@ include("src/polynomial_sparse.jl")
     include("src/basic_polynomial_operations/polynomial_sparse_division.jl")
     include("src/basic_polynomial_operations/polynomial_sparse_gcd.jl")
 include("src/polynomial_factorization/factor.jl")
+include("src/polynomial_factorization/factor_sparse.jl")
 
 
 
