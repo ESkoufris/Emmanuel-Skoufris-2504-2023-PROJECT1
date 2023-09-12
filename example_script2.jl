@@ -21,14 +21,19 @@ derivative(p)
 
 (q ÷ p)(5)
 
+
+mod(q,5)
 gcd(2x^2 + 4, x+1, 5)
 
+gcd(x,x,5)
 
 
+p - q
+- p
 p = x
 t = Term(1,2)
 
-leading(p).dict
+p*q
 
 push!(x, Term(1,2)).terms
 
@@ -37,3 +42,16 @@ push!(x, Term(1,2)).terms
 
 
 q*Term(1,5)
+
+Term(Int128(1), Int128(2))
+
+superscript(Int128(2))
+
+u = x^2 + 128x
+
+v = 4x + 1
+
+gcd(u, v, 5)
+typeof(Term128(1,2).coeff)
+
+

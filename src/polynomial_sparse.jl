@@ -14,23 +14,19 @@ struct PolynomialSparse
     #for the zero polynomial where the vector is of length 1.
     #Note: at positions where the coefficient is 0, the power of the term is also 0 (this is how the Term type is designed)
     terms::MutableLinkedList{Term}
-    dict::Dict{Int, DataStructures.ListNode{Term}}
+    dict::Dict{Integer, DataStructures.ListNode{Term}}
 
     #Inner constructor of 0 polynomial
-    PolynomialSparse() = new(MutableLinkedList{Term}(Term(0,0)), Dict{Int, DataStructures.ListNode{Term}}())
+    PolynomialSparse() = new(MutableLinkedList{Term}(), Dict{Integer, DataStructures.ListNode{Term}}())
 
     #Inner constructor of sparse polynomial based on arbitrary list of terms
     function PolynomialSparse(vt::Vector{Term})
 
         #Filter the vector so that there is not more than a single zero term
         vt = filter((t)->!iszero(t), vt)
-        if isempty(vt)
-            vt = [zero(Term)]
-        end
 
         dict = Dict{Int, DataStructures.ListNode{Term}}()
         terms = MutableLinkedList{Term}()
-        max_degree = maximum((t)->t.degree, vt)
 
         #filling up the mutable linked list with the terms and the dictionary containing the degrees
         for t in vt
@@ -242,7 +238,7 @@ iszero(p::PolynomialSparse)::Bool = p.terms == MutableLinkedList{Term}(Term(0,0)
 """
 The negative of a polynomial.
 """
--(p::PolynomialSparse) = PolynomialSparse(map((y)->-y, [get_element(p.terms, p.dict, t.degree) for t in p.terms]))
+-(p::PolynomialSparse) = PolynomialSparse([-t for t in p.terms])
 
 """
 Create a new polynomial which is the derivative of the polynomial.
@@ -303,7 +299,8 @@ function *(t::Term, p::PolynomialSparse)::PolynomialSparse
     if iszero(t) 
        PolynomialSparse() 
     else
-        PolynomialSparse(map((pt)->t*pt, [get_element(p.terms, p.dict, term.degree) for term in p.terms]))
+        println(t, " ", p.terms, " ", [term for term in p.terms])
+        PolynomialSparse([t*term for term in p.terms])
     end
 
 end

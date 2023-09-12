@@ -14,13 +14,15 @@
 A term.
 """
 struct Term  #structs are immutable by default
-    coeff
-    degree
+    coeff::Integer
+    degree::Integer
     function Term(coeff, degree) 
         degree < 0 && error("Degree must be non-negative")
         coeff != 0 ? new(coeff,degree) : new(coeff,0)
     end
 end
+
+Term128(n,k) = Term(Int128(n), Int128(k))
 
 """
 Creates the zero term.
@@ -40,7 +42,7 @@ one(::Type{Term})::Term = Term(1,0)
 Unicode superscript.
 """
 
-function superscript(n::Int)
+function superscript(n::Integer)
 
     digit_to_unicode = Dict(
         '0' => 0x2070,
