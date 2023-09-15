@@ -38,5 +38,6 @@ division_test_poly_sparse()
 ####
 include("factorization_test.jl")
 factor_test_poly()
+factor_test_poly_sparse()
 
 

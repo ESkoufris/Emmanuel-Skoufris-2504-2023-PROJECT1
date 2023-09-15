@@ -346,13 +346,16 @@ end
 Power of a polynomial mod prime.
 """
 function pow_mod(p::PolynomialSparse, n::Int, prime::Int)
-    n < 0 && error("No negative power")
+    
+    return (PolynomialModP(p, prime)^n).polynomial
+
+    #= n < 0 && error("No negative power")
     out = one(p)
     for _ in 1:n
         out *= p
         out = mod(out, prime)
     end
-    return out
+    return out =#
 end
 
 """

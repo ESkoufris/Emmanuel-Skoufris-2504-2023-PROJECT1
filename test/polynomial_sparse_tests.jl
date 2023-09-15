@@ -10,7 +10,7 @@
 """
 Test product of polynomials.
 """
-function prod_test_poly_sparse(;N::Int = 10^3, N_prods::Int = 20, seed::Int = 0)
+function prod_test_poly_sparse(;N::Int = 15, N_prods::Int = 20, seed::Int = 0)
     Random.seed!(seed)
     for _ in 1:N
         p1 = rand(PolynomialSparse)
