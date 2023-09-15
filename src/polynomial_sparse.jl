@@ -204,13 +204,16 @@ Push a new term into the polynomial.
 """
 #Note that ideally this would throw and error if pushing another term of degree that is already in the polynomial
 function push!(p::PolynomialSparse, t::Term) 
-    if haskey(p.dict, t.degree) 
-       delete_element!(p.terms, p.dict, t.degree)
-       insert_sorted!(p.terms, p.dict, t.degree, t)
-    else
-        # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
-        insert_sorted!(p.terms, p.dict, t.degree, t)
-    end
+    if !iszero(t)
+        if haskey(p.dict, t.degree) 
+            delete_element!(p.terms, p.dict, t.degree)
+            insert_sorted!(p.terms, p.dict, t.degree, t)
+        else
+            # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
+            insert_sorted!(p.terms, p.dict, t.degree, t)
+        end
+    else nothing 
+    end 
     return p        
 end
 
@@ -234,7 +237,7 @@ end
 """
 Check if the polynomial is zero.
 """
-iszero(p::PolynomialSparse)::Bool = p.terms == MutableLinkedList{Term}(Term(0,0))
+iszero(p::PolynomialSparse)::Bool = (p.terms == MutableLinkedList{Term}() || p.terms == MutableLinkedList{Term}(Term(0,0))) 
 
 """
 The negative of a polynomial.
@@ -329,13 +332,13 @@ function mod(f::PolynomialSparse, p::Int)::PolynomialSparse
     end
     return trim!(f_out)
          =#
-
-    p_out = PolynomialSparse()
+    p_out = PolynomialSparse(mod.(f.terms, p))
+    #= p_out = PolynomialSparse()
     for t in f.terms
         new_term = mod(t, p)
         @show new_term
         push!(p_out, new_term)
-    end
+    end =#
     return p_out
 end
 
@@ -364,10 +367,10 @@ struct PolynomialSparse128
     #for the zero polynomial where the vector is of length 1.
     #Note: at positions where the coefficient is 0, the power of the term is also 0 (this is how the Term type is designed)
     terms::MutableLinkedList{Term}
-    dict::Dict{Integer, DataStructures.ListNode{Term}}
+    dict::Dict{Int128, DataStructures.ListNode{Term}}
 
     #Inner constructor of 0 polynomial
-    PolynomialSparse128() = new(MutableLinkedList{Term}(), Dict{Integer, DataStructures.ListNode{Term}}())
+    PolynomialSparse128() = new(MutableLinkedList{Term}(), Dict{Int128, DataStructures.ListNode{Term}}())
 
     #Inner constructor of sparse128 polynomial based on arbitrary list of terms
     function PolynomialSparse128(vt::Vector{Term})
@@ -375,7 +378,7 @@ struct PolynomialSparse128
         #Filter the vector so that there is not more than a single zero term
         vt = filter((t)->!iszero(t), vt)
 
-        dict = Dict{Int, DataStructures.ListNode{Term}}()
+        dict = Dict{Int128, DataStructures.ListNode{Term}}()
         terms = MutableLinkedList{Term}()
 
         #filling up the mutable linked list with the terms and the dictionary containing the degrees
@@ -550,14 +553,28 @@ evaluate(f::PolynomialSparse128, x::T) where T <: Number = sum(evaluate(t,x) for
 Push a new term into the polynomial.
 """
 #Note that ideally this would throw and error if pushing another term of degree that is already in the polynomial
-function push!(p::PolynomialSparse128, t::Term) 
+#= function push!(p::PolynomialSparse128, t::Term) 
     if haskey(p.dict, t.degree) 
-       delete_element!(p.terms, p.dict, t.degree)
+       delete_element!(p.terms, p.dict, Int128(t.degree))
        insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t))
     else
         # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
         insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t))
     end
+    return p        
+end =#
+
+function push!(p::PolynomialSparse128, t::Term) 
+    if !iszero(t)
+        if haskey(p.dict, t.degree) 
+            delete_element!(p.terms, p.dict, t.degree)
+            insert_sorted!(p.terms, p.dict, t.degree, t)
+        else
+            # this implementation differs from that of PolynomialDense, since we also have to update the dictionary.
+            insert_sorted!(p.terms, p.dict, t.degree, t)
+        end
+    else nothing 
+    end 
     return p        
 end
 
@@ -581,7 +598,7 @@ end
 """
 Check if the polynomial is zero.
 """
-iszero(p::PolynomialSparse128)::Bool = p.terms == MutableLinkedList{Term}(Term(0,0))
+iszero(p::PolynomialSparse128)::Bool = (p.terms == MutableLinkedList{Term}() || p.terms == MutableLinkedList{Term}(Term128(0,0))) 
 
 """
 The negative of a polynomial.
@@ -656,15 +673,15 @@ end
 """
 Multiplication of polynomial and an integer.
 """
-*(n::Int, p::PolynomialSparse128)::PolynomialSparse128 = p*Term(n,0)
-*(p::PolynomialSparse128, n::Int)::PolynomialSparse128 = n*p
+*(n::Integer, p::PolynomialSparse128)::PolynomialSparse128 = p*Term(n,0)
+*(p::PolynomialSparse128, n::Integer)::PolynomialSparse128 = n*p
 
 """
 Integer division of a polynomial by an integer.
 
 Warning this may not make sense if n does not divide all the coefficients of p.
 """
-÷(p::PolynomialSparse128, n::Int) = (prime) -> PolynomialSparse128([(term ÷ n)(prime) for term in p.terms])
+÷(p::PolynomialSparse128, n::Integer) = (prime) -> PolynomialSparse128([(term ÷ n)(prime) for term in p.terms])
 
 """
 Take the mod of a polynomial with an integer.
@@ -676,15 +693,16 @@ function mod(f::PolynomialSparse128, p::Int)::PolynomialSparse128
     end
     return trim!(f_out)
          =#
-
-    p_out = PolynomialSparse128()
+    p_out = PolynomialSparse128(mod.(f.terms, p))
+    #= p_out = PolynomialSparse()
     for t in f.terms
         new_term = mod(t, p)
         @show new_term
         push!(p_out, new_term)
-    end
+    end =#
     return p_out
 end
+
 
 """
 Power of a polynomial mod prime.

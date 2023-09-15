@@ -41,3 +41,5 @@ Add a polynomial and an integer.
 """
 +(p::PolynomialDense, n::Int) = p + Term(n,0)
 +(n::Int, p::PolynomialDense) = p + Term(n,0)
+-(n::Int, p::PolynomialDense) = -p + Term(n,0)
+-(p::PolynomialDense, n::Int) = p + Term(-n,0)

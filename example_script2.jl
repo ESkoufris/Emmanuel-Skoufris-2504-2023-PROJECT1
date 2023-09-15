@@ -3,95 +3,37 @@ Pkg.activate(".")
 
 include("poly_factorization_project.jl")
 
-
 x = x_polysparse()
 
+
 p = -4x^2 + 3x^6 + 2x^9
-q = 0*x + 5x^2 + 0*x^3 - 7x^4 + 9098x^7 - x^9
+q = 4x^4 - 190x^10 + 1
 
 
+# generating a random polynomial
+rand(PolynomialSparse)
+
+
+# PolynomialSparse allows one to access the degrees of (non-zero) terms through a dictionary 
 @show (p*q).dict
 
-mod(p, 5)
-derivative(p)
 
-(p ÷ q)(5)
-
-(x ÷ x)(5)
-
-(q ÷ p)(5)
+# reducing the coeffcients of p modulo 5
+mod(q, 5)
 
 
-mod(q,5)
-gcd(2x^2 + 4, x+1, 5)
-
-gcd(x,x,5)
-
-
-p - q
-- p
-p = x
-t = Term(1,2)
-
-p*q
-
-push!(x, Term(1,2)).terms
+# dividing p by q modulo 7. In particular, the set of equivalence classes modulo 7 forms a field since 7 is prime,
+# and so "division" of the nonzero coefficients is perfectly well defined 
+(q ÷ p)(7)
 
 
-((2x^2 + 4) ÷ (x+1))(5)
+# finding the gcd of two polynomials modulo 5. We are reducing the coeffcients of the polynomials modulo 7 and then looking 
+# for the polynomial of greatest degree that divides both of them. 
+gcd(x - 2, x^2 - 4, 7)
 
 
-q*Term(1,5)
+# factoring a polynomial modulo 11
+factor(10x^8 + 8x^7 + 9x^6 + 3x + 4, 11)
 
-Term(Int128(1), Int128(2))
 
-superscript(Int128(2))
 
-u = x^2 + 128x
-
-v = 4x + 1
-
-gcd(u, v, 5)
-typeof(Term128(1,2).coeff)
-
-extended_euclid_alg(x,x,5)
-
-y = x_poly()
-
-extended_euclid_alg(y,y,1)
-
-factor(p,5)
-
-p = x^2 + 1
-q = x + 3
-
-factor(p, 5)
-
-prim_part(p)(5)
-
-content(p)
-
-(p ÷ 3)(5)
-
-typeof((Term(1,1) ÷ 2)(5))
-
-(p ÷ content(p))
-
-prim_part(x)(5)
-
-(p ÷ q)(5)
-
-typeof(p)
-
-u = x^2 + 1
-v = x + 2
-
-(u ÷ v)(5)
-
-typeof(PolynomialSparse(Term(1,1)))
-
-typeof(x.terms[1].degree)
-
-Term128(Term(1,1) + Term(1,1))
-
-x*Term(1,1)

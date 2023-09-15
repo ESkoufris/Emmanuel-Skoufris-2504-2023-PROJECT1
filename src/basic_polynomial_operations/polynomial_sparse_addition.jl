@@ -64,8 +64,8 @@ function +(p::PolynomialSparse128, t::Term)
 
     #much of this was modified to accomodate for the mutable linked list and dictionary structure 
     if haskey(p.dict, t.degree) 
-        t0 = get_element(p.terms, p.dict, Term128(t.degree))
-        delete_element!(p.terms, p.dict, Term128(t.degree))
+        t0 = get_element(p.terms, p.dict, Int128(t.degree))
+        delete_element!(p.terms, p.dict, Int128(t.degree))
         insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t0 + t))
     else  
         insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t))
