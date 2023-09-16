@@ -342,6 +342,23 @@ function mod(f::PolynomialSparse, p::Int)::PolynomialSparse
     return p_out
 end
 
+function smod(f::PolynomialSparse, p::Int)::PolynomialSparse
+    #= f_out = deepcopy(f)
+    for i in 1:length(f_out.terms)
+        f_out.terms[i] = mod(f_out.terms[i], p)
+    end
+    return trim!(f_out)
+         =#
+    p_out = PolynomialSparse(smod.(f.terms, p))
+    #= p_out = PolynomialSparse()
+    for t in f.terms
+        new_term = mod(t, p)
+        @show new_term
+        push!(p_out, new_term)
+    end =#
+    return p_out
+end
+
 """
 Power of a polynomial mod prime.
 """
@@ -719,5 +736,8 @@ function pow_mod(p::PolynomialSparse128, n::Int, prime::Int)
     end
     return out
 end
+
+smod(f::PolynomialSparse128, p)::PolynomialSparse128 = PolynomialSparse128(smod.(f.terms, p))
+
 
 

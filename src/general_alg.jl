@@ -50,6 +50,20 @@ Display the result of the extended Euclidean algorithm.
 """
 pretty_print_egcd((a,b),(g,s,t)) = println("$a × $s + $b × $t = $g") #\times + [TAB]
 
+
+"""
+Symmetric mod
+
+"""
+function smod(x, m)
+    r = x % m
+    if r <= m // 2
+        return r
+    else
+        return r - m
+    end
+end
+
 """
 Integer inverse symmetric mod
 """
@@ -59,3 +73,51 @@ function int_inverse_mod(a::Integer, m::Integer)::Integer
     end
     return mod(ext_euclid_alg(a,m)[2],m)
 end
+
+"""
+Chinese Remainder Theorem
+"""
+
+using LinearAlgebra
+
+function crt(u::Vector{Int}, m::Vector{Int})
+   #=  length(u) != length(m) && return  =#
+   k = length(m)
+   v = zeros(k+1)
+   v[1] = mod(u[1],m[1])
+
+   q = zeros(k + 1)
+   q[1] = Int(1)
+
+   # creating a vector of the form (1,m2,m1*m2, m1*m2*m3,...)
+   for i in 2:(k+1)
+       q[i] = *(m[1:(i-1)]...);
+   end
+
+   for i in 2:k
+       inv = int_inverse_mod(Integer(q[i]), m[i]) 
+       v[i] = mod(inv*(u[i] - dot(v,q)), m[i])
+   end 
+   return Integer(dot(v,q))
+end 
+
+function crt(u, m)
+    #=  length(u) != length(m) && return  =#
+    k = length(m)
+    v = zeros(k+1)
+    v[1] = mod(u[1],m[1])
+ 
+    q = zeros(k + 1)
+    q[1] = Int(1)
+ 
+    # creating a vector of the form (1,m2,m1*m2, m1*m2*m3,...)
+    for i in 2:(k+1)
+        q[i] = *(m[1:(i-1)]...);
+    end
+ 
+    for i in 2:k
+        inv = int_inverse_mod(Integer(q[i]), m[i]) 
+        v[i] = mod(inv*(u[i] - dot(v,q)), m[i])
+    end 
+    return Integer(dot(v,q))
+ end 

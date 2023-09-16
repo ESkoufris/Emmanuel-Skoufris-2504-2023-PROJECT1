@@ -137,6 +137,7 @@ Multiply two terms.
 Compute the symmetric mod of a term with an integer.
 """
 mod(t::Term, p::Int) = Term(mod(t.coeff,p), t.degree)
+smod(t::Term, p::Int) = Term(smod(t.coeff,p), t.degree)
 
 """
 Compute the derivative of a term.
