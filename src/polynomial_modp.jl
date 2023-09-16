@@ -159,6 +159,10 @@ end
 ## exponentiation
 ^(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(p.polynomial^n, p.prime)
 
+# pow_mod function 
+#= function pow_mod(p::PolynomialModP128, ) =#
+
+
 ## division 
 ÷(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128((p1.polynomial ÷ p2)(p1.prime), p1.prime)
 ÷(p1::PolynomialSparse128, p2::PolynomialModP128,)::PolynomialModP128 = PolynomialModP128((p2.polynomial ÷ p1)(p2.prime), p2.prime)
