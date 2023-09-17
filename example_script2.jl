@@ -34,6 +34,3 @@ gcd(x - 2, x^2 - 4, 7)
 
 # factoring a polynomial modulo 11
 factor(10x^8 + 8x^7 + 9x^6 + 3x + 4, 11)
-
-
-

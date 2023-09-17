@@ -149,18 +149,39 @@ end
 
 ## multiplication
 *(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128(p1.polynomial*p2, p1.prime)
-*(p1::PolynomialSparse128, p2::PolynomialModP128,)::PolynomialModP128 = PolynomialModP128(p2.polynomial*p1, p2.prime)
+*(p1::PolynomialSparse128, p2::PolynomialModP128)::PolynomialModP128 = PolynomialModP128(p2.polynomial*p1, p2.prime)
+
+*(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(n*p.polynomial, p.prime)
+*(n::Integer,p::PolynomialModP128)::PolynomialModP128 = PolynomialModP128(n*p.polynomial, p.prime)
 
 function *(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
     @assert p1.prime == p2.prime
     return PolynomialModP128(p1.polynomial*p2.polynomial, p1.prime)
 end 
 
-## exponentiation
+## exponentiation - TO BE REPLACED
 ^(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(p.polynomial^n, p.prime)
 
-# pow_mod function 
-#= function pow_mod(p::PolynomialModP128, ) =#
+### better exponentiation
+
+function pow_mod1(f::PolynomialModP128, m::Integer)
+    num_bits = Int(floor(log2(m) + 1)) # computing the position of the leftmost bit.
+    bits = zeros(num_bits) 
+
+    for i in 1:num_bits
+        (m & (1 << (i-1)) != 0) && (bits[i] = 1) # checks if the i'th bit is zero. 
+    end
+
+    ans, w = 1, f  
+
+    for i in 1:num_bits
+        if bits[i] == 1
+           ans *= w 
+        end
+        w *= w
+    end
+    return ans
+end
 
 
 ## division 
