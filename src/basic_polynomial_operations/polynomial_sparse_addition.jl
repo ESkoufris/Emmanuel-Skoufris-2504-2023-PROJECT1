@@ -11,12 +11,14 @@ Add a polynomial and a term.
 """
 function +(p::PolynomialSparse, t::Term)
     p = deepcopy(p)
-
-    #much of this was modified to accomodate for the mutable linked list and dictionary structure 
+ 
     if haskey(p.dict, t.degree) 
         t0 = get_element(p.terms, p.dict, t.degree)
+        #= t.degree != t0.degree && print(p.terms, "\n", p.terms[1], "\n", (t0,t), "\n", p.dict,) =#
         delete_element!(p.terms, p.dict, t.degree)
-        insert_sorted!(p.terms, p.dict, t.degree, t0 + t)
+
+        # checking if t0 = 0 is to account for some weird edge cases in which the zeroth term is somehow stored in p.terms
+        !iszero(t0) ? insert_sorted!(p.terms, p.dict, t.degree, t0 + t) : insert_sorted!(p.terms, p.dict, t.degree,t)
     else  
         insert_sorted!(p.terms, p.dict, t.degree, t)
     end
@@ -66,7 +68,7 @@ function +(p::PolynomialSparse128, t::Term)
     if haskey(p.dict, t.degree) 
         t0 = get_element(p.terms, p.dict, Int128(t.degree))
         delete_element!(p.terms, p.dict, Int128(t.degree))
-        insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t0 + t))
+        !iszero(t0) ? insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t0 + t)) : insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t))
     else  
         insert_sorted!(p.terms, p.dict, Int128(t.degree), Term128(t))
     end

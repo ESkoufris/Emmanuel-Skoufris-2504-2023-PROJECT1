@@ -14,10 +14,10 @@ struct PolynomialSparse
     #for the zero polynomial where the vector is of length 1.
     #Note: at positions where the coefficient is 0, the power of the term is also 0 (this is how the Term type is designed)
     terms::MutableLinkedList{Term}
-    dict::Dict{Integer, DataStructures.ListNode{Term}}
+    dict::Dict{Int, DataStructures.ListNode{Term}}
 
     #Inner constructor of 0 polynomial
-    PolynomialSparse() = new(MutableLinkedList{Term}(), Dict{Integer, DataStructures.ListNode{Term}}())
+    PolynomialSparse() = new(MutableLinkedList{Term}(), Dict{Int, DataStructures.ListNode{Term}}())
 
     #Inner constructor of sparse polynomial based on arbitrary list of terms
     function PolynomialSparse(vt::Vector{Term})

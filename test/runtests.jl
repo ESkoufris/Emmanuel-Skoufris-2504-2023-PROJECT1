@@ -33,6 +33,11 @@ prod_derivative_test_poly_sparse()
 ext_euclid_test_poly_sparse()
 division_test_poly_sparse()
 
+prod_test_poly_sparse128()
+prod_derivative_test_poly_sparse128()
+ext_euclid_test_poly_sparse128()
+division_test_poly_sparse128()
+
 ####
 # Execute unit tests for polynomial factorization
 ####

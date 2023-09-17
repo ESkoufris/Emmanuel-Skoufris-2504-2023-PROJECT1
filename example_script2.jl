@@ -34,3 +34,13 @@ gcd(x - 2, x^2 - 4, 7)
 
 # factoring a polynomial modulo 11
 factor(10x^8 + 8x^7 + 9x^6 + 3x + 4, 11)
+
+a = PolynomialSparse128([Term(2^i,i) for i in 1:30])
+b = PolynomialSparse128([Term(3^i,i) for i in 1:30])
+
+@time crt_multiply(a, b)
+
+@time a*b
+
+x = x_poly()
+

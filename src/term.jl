@@ -112,7 +112,7 @@ evaluate(t::Term, x::T) where T <: Number = t.coeff * x^t.degree
 """
 Add two terms of the same degree.
 """
-function +(t1::Term,t2::Term)::Term
+function +(t1::Term, t2::Term)::Term
     @assert t1.degree == t2.degree
     Term(t1.coeff + t2.coeff, t1.degree)
 end
