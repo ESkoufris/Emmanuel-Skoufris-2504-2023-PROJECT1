@@ -96,9 +96,9 @@ Test multiplication using the Chineses Remainder Theorem
 """
 function crt_multiply_test_poly_sparse(;N::Int = 100)
     for _ in 1:N
-        p1 = rand(PolynomialSparse)
-        p2 = rand(PolynomialSparse)
-        crt_multiply(p1,p2) != p1*p2 && println("p1 = $(p1)", "\n","p2 = $(p2)", "\n", crt_multiply(p1,p2), "\n", p1*p2)
+        p1 = rand(PolynomialSparse128)
+        p2 = rand(PolynomialSparse128)
+        crt_multiply(p1,p2) != p1*p2 && println("p1 = $(p1)", "\n","p2 = $(p2)", "\n", crt_multiply(p1,p2), "\n", p1*p2) # useful for debugging 
         @assert crt_multiply(p1,p2) == p1*p2
     end 
     println("crt_multiply_test_poly_sparse - PASSED")
