@@ -44,6 +44,7 @@ include("polynomial_modp_tests.jl")
 prod_test_poly_modp()
 division_test_poly_modp()
 ext_euclid_test_poly_modp()
+pow_mod_test()
 ####
 # Execute unit tests for polynomial factorization
 ####

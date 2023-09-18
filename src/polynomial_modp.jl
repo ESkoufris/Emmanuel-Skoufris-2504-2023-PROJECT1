@@ -187,21 +187,36 @@ end
 
 ### better exponentiation
 
-function pow_mod1(f::PolynomialModP128, m::Integer)
-    num_bits = Int(floor(log2(m) + 1)) # computing the position of the leftmost bit.
-    bits = zeros(num_bits) 
+## FOR WHATEVER REASON, THIS IMPLEMENTATION IS VERY SLOW
+#= function pow_mod1(f::PolynomialModP128, m::Integer)
+    max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
 
-    for i in 1:num_bits
-        (m & (1 << (i-1)) != 0) && (bits[i] = 1) # checks if the i'th bit is zero. 
-    end
+    w, ans = f, PolynomialModP128(one(PolynomialSparse128), f.prime)  
 
-    ans, w = 1, f  
-
-    for i in 1:num_bits
-        if bits[i] == 1
-           ans *= w 
+    for i in 0:max_pow
+        if m & (1 << i) != 0 #if n has a 1 in the ith bit
+            ans *= w
         end
         w *= w
+    end
+    return ans
+end =#
+
+function pow_mod_efficient(f::PolynomialModP128, m::Integer)
+    max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
+
+    w = [f]
+    
+    for i in 1:max_pow
+        w = push!(w, w[end]^2)
+    end 
+
+    ans =  PolynomialModP128(one(PolynomialSparse128), f.prime)  
+
+    for i in 0:max_pow
+        if m & (1 << i) != 0 # check if the ith bit of m is 1
+            ans *= w[i+1]
+        end
     end
     return ans
 end

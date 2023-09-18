@@ -94,4 +94,14 @@ function ext_euclid_test_poly_modp(;prime::Int=103, N::Int = 10^3, seed::Int = 0
     println("ext_euclid_test_poly_modp - PASSED")
 end
 
+"""
+Test exponentiation using repeated squaring
+"""
 
+function pow_mod_test(;prime::Int=103, N::Int = 10)
+    p = rand(PolynomialSparse128)
+    for k in 1:N
+        @assert pow_mod_efficient(PolynomialModP128(p, prime), k) == PolynomialModP128(p, prime)^k
+    end 
+    println("pow_mod_test - PASSED")
+end 

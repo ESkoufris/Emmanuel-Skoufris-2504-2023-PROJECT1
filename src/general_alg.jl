@@ -108,23 +108,21 @@ function crt(u, m)
  Fast exponentiation mod p using repeated squaring
 """
 
-function pow_mod(x::Integer, m::Integer, p::Integer)
-    @assert m > 0 && isprime(p)
+function pow_mod_efficient(x::Integer, m::Integer, p::Integer)
+    max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
+
+    w = [x]
     
-    num_bits = Int(floor(log2(m) + 1)) # computing the position of the leftmost bit.
-    bits = zeros(num_bits) 
+    for i in 1:max_pow
+        w = push!(w, w[end]^2)
+    end 
 
-    for i in 1:num_bits
-        (m & (1 << (i-1)) != 0) && (bits[i] = 1) # checks if the i'th bit is zero. 
-    end
+    ans = 1
 
-    ans, w = 1, mod(x, p)   
-
-    for i in 1:num_bits
-        if bits[i] == 1
-           ans = mod(ans*w, p)  # reducing modulo p for more efficient multiplcation
+    for i in 0:max_pow
+        if m & (1 << i) != 0 # check if the ith bit of m is 1
+            ans = mod(w[i+1]*ans,p)
         end
-        w = mod(w^2, p)
     end
     return ans
 end

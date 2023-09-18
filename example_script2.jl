@@ -34,3 +34,14 @@ gcd(x - 2, x^2 - 4, 7)
 # factoring a polynomial over the ring Z₁₁[x]
 factor(10x^8 + 8x^7 + 9x^6 + 3x + 4, 11)
 
+x = x_polysparse128()
+
+p = 4x^4 + 2x^3 + 2x + 8x^6
+
+@time pow_mod_efficient(p,10,5)
+
+@time pow_mod_efficient(PolynomialModP128(p,5),10)
+@time mod(p^10,5)
+
+@time p+p
+

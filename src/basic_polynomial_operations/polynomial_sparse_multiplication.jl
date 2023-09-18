@@ -55,21 +55,21 @@ function ^(p::PolynomialSparse128, n::Int)
     return out
 end
 
-function pow_mod1(f::PolynomialSparse128, m::Integer, p::Integer)
-    num_bits = Int(floor(log2(m) + 1)) # computing the position of the leftmost bit.
-    bits = zeros(num_bits) 
+function pow_mod_efficient(f::PolynomialSparse128, m::Integer, p::Integer)
+    max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
 
-    for i in 1:num_bits
-        (m & (1 << (i-1)) != 0) && (bits[i] = 1) # checks if the i'th bit is zero. 
-    end
+    w = [f]
+    
+    for i in 1:max_pow
+        w = push!(w, w[end]^2)
+    end 
 
-    ans, w = 1, mod(f, p)   
+    ans = mod(one(PolynomialSparse128), p)  
 
-    for i in 1:num_bits
-        if bits[i] == 1
-           ans = mod(ans*w, p)  # reducing modulo p for more efficient multiplcation
+    for i in 0:max_pow
+        if m & (1 << i) != 0 # check if the ith bit of m is 1
+            ans = mod(w[i+1]*ans,p)
         end
-        w = mod(w^2, p)
     end
     return ans
 end
