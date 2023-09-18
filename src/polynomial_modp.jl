@@ -54,8 +54,19 @@ function ÷(p1::PolynomialModP, p2::PolynomialModP)::PolynomialModP
     return PolynomialModP((p1.polynomial ÷ p2.polynomial)(p1.prime), p1.prime)
 end 
 
-# remainder
+function divide(p1::PolynomialModP, p2::PolynomialModP)
+    @assert p1.prime == p2.prime
+        divide(p1.polynomial, p2.polynomial)(p1.prime)
+end 
 
+# Derivatives
+derivative(p::PolynomialModP) = PolynomialModP(derivative(p.polynomial), p.prime)
+
+# Extended euclidean algorithm
+function extended_euclid_alg(p1::PolynomialModP, p2::PolynomialModP)
+    @assert p1.prime == p2.prime 
+    return extended_euclid_alg(p1.polynomial, p2.polynomial, p1.prime)
+end
 # gcd
 gcd(p1::PolynomialModP, p2::PolynomialSparse)::PolynomialModP = PolynomialModP(gcd(p1.polynomial, p2, p1.prime), p1.prime) 
 gcd(p1::PolynomialSparse, p2::PolynomialModP)::PolynomialModP = PolynomialModP(gcd(p1, p2.polynomial, p2.prime))
@@ -78,7 +89,7 @@ coeffs(p::PolynomialModP) = coeffs(p.polynomial)
 
 
 # Multiplication using the Chinese Remainder Theorem
-function crt_poly(a::PolynomialSparse, b::PolynomialSparse, m_a::Integer, m_b::Integer)
+#= function crt_poly(a::PolynomialSparse, b::PolynomialSparse, m_a::Integer, m_b::Integer)
     c = PolynomialModP(zero(PolynomialSparse), m_a*m_b)
     n = max(degree(a),degree(b))
     for k in 1:(n+1)
@@ -88,13 +99,25 @@ function crt_poly(a::PolynomialSparse, b::PolynomialSparse, m_a::Integer, m_b::I
         c += ck*x_polysparse()^(n - k + 1)
     end
     return c
+end  =#
+
+function crt_poly(a::PolynomialSparse, b::PolynomialSparse, m_a::Integer, m_b::Integer)
+    c = PolynomialModP(zero(PolynomialSparse), m_a*m_b)
+    n = max(degree(a),degree(b))
+    for k in push!(reverse(collect(1:n)),0)
+        k > degree(a) || !haskey(a.dict, k) ? ak = 0 : ak = get_element(a.terms, a.dict, k).coeff
+        k > degree(b) || !haskey(b.dict, k) ? bk = 0 : bk = get_element(b.terms, b.dict, k).coeff
+        ck = crt([ak,bk], [m_a, m_b])
+        c += ck*(x_polysparse()^k)
+    end
+    return c
 end 
 
 function crt_multiply(a::PolynomialSparse, b::PolynomialSparse)
     height_a = maximum(abs.(coeffs(a)))
     height_b = maximum(abs.(coeffs(b)))
 
-    B = 2*height_a*height_b*min(degree(a),degree(b))
+    B = 2*height_a*height_b*min(degree(a)+1,degree(b)+1)
     p = 3
     M = p
     c = PolynomialModP(a*b, M)
@@ -217,7 +240,7 @@ coeffs(p::PolynomialModP128) = coeffs(p.polynomial)
 
 
 # Multiplication using the Chinese Remainder Theorem
-function crt_poly(a::PolynomialSparse128, b::PolynomialSparse128, m_a::Integer, m_b::Integer)
+#= function crt_poly(a::PolynomialSparse128, b::PolynomialSparse128, m_a::Integer, m_b::Integer)
     c = PolynomialModP128(zero(PolynomialSparse128), m_a*m_b)
     n = max(degree(a),degree(b))
     for k in 1:(n+1)
@@ -227,13 +250,25 @@ function crt_poly(a::PolynomialSparse128, b::PolynomialSparse128, m_a::Integer, 
         c += ck*x_polysparse128()^(n - k + 1)
     end
     return c
+end  =#
+
+function crt_poly(a::PolynomialSparse128, b::PolynomialSparse128, m_a::Integer, m_b::Integer)
+    c = PolynomialModP128(zero(PolynomialSparse128), m_a*m_b)
+    n = max(degree(a),degree(b))
+    for k in push!(reverse(collect(1:n)),0)
+        k > degree(a) || !haskey(a.dict, k) ? ak = 0 : ak = get_element(a.terms, a.dict, Int128(k)).coeff
+        k > degree(b) || !haskey(b.dict, k) ? bk = 0 : bk = get_element(b.terms, b.dict, Int128(k)).coeff
+        ck = crt([ak,bk], [m_a, m_b])
+        c += ck*x_polysparse128()^k
+    end
+    return c
 end 
 
 function crt_multiply(a::PolynomialSparse128, b::PolynomialSparse128)
     height_a = maximum(abs.(coeffs(a)))
     height_b = maximum(abs.(coeffs(b)))
 
-    B = 2*height_a*height_b*min(degree(a),degree(b))
+    B = 2*height_a*height_b*min(degree(a) + 1,degree(b) + 1)
     p = 3
     M = p
     c = PolynomialModP128(a*b, M)

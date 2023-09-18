@@ -91,17 +91,20 @@ function ext_euclid_test_poly_sparse(;prime::Int=101, N::Int = 10^3, seed::Int =
     println("ext_euclid_test_poly_sparse - PASSED")
 end
 
+"""
+Test multiplication using the Chineses Remainder Theorem
+"""
+function crt_multiply_test_poly_sparse(;N::Int = 100)
+    for _ in 1:N
+        p1 = rand(PolynomialSparse)
+        p2 = rand(PolynomialSparse)
+        crt_multiply(p1,p2) != p1*p2 && println("p1 = $(p1)", "\n","p2 = $(p2)", "\n", crt_multiply(p1,p2), "\n", p1*p2)
+        @assert crt_multiply(p1,p2) == p1*p2
+    end 
+    println("crt_multiply_test_poly_sparse - PASSED")
+end
 
 # Tests for PolynomialSparse128
-
-
-"""
-Test overflow for PolynomialSparse128
-"""
-function overflow_test(p::PolynomialSparse; n = 128)
-    return nothing 
-end 
-
 
 """
 Test product of polynomials.
@@ -186,3 +189,16 @@ function ext_euclid_test_poly_sparse128(;prime::Int=101, N::Int = 10^3, seed::In
     end
     println("ext_euclid_test_poly_Sparse128 - PASSED")
 end
+
+"""
+Test potential overflow of coefficients 
+"""
+function overflow_test(; n = 127)
+    for k in 2:n
+        p = PolynomialSparse128([Term(Int128(2)^k - 1,1)])
+        @assert leading(p).coeff > 0
+    end 
+    println("overflow_test- PASSED")
+end
+
+

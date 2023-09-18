@@ -88,7 +88,10 @@ function crt(u, m)
  
     q = zeros(k + 1)
     q[1] = Int(1)
- 
+    
+    # could remove this if it causes problems
+    #= iszero(u) && return *(m...) =#
+    
     # creating a vector of the form (1,m2,m1*m2, m1*m2*m3,...)
     for i in 2:(k+1)
         q[i] = *(m[1:(i-1)]...);

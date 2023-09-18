@@ -7,8 +7,7 @@ x = x_polysparse()
 
 
 p = -4x^2 + 3x^6 + 2x^9
-q = 4x^4 - 190x^10 + 1
-
+q = 4x^4 - 190x^10 + 1 
 
 # generating a random polynomial
 rand(PolynomialSparse)
@@ -32,15 +31,6 @@ mod(q, 5)
 gcd(x - 2, x^2 - 4, 7)
 
 
-# factoring a polynomial modulo 11
+# factoring a polynomial over the ring Z₁₁[x]
 factor(10x^8 + 8x^7 + 9x^6 + 3x + 4, 11)
-
-a = PolynomialSparse128([Term(2^i,i) for i in 1:30])
-b = PolynomialSparse128([Term(3^i,i) for i in 1:30])
-
-@time crt_multiply(a, b)
-
-@time a*b
-
-x = x_poly()
 

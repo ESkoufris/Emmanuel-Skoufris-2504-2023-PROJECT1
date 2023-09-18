@@ -683,7 +683,7 @@ function *(t::Term, p::PolynomialSparse128)::PolynomialSparse128
     if iszero(t) 
        PolynomialSparse128() 
     else
-        PolynomialSparse128([t*term for term in p.terms])
+        PolynomialSparse128([Term128(t)*term for term in p.terms])
     end
 
 end
