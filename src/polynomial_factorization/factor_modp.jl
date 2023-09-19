@@ -31,14 +31,13 @@ function factor(f::PolynomialModP128)::Vector{Tuple{PolynomialModP128,Integer}}
     ff = ff ÷ old_coeff       
     # @show "after monic:", ff
 
-    # UP TO HERE #
-    dds = dd_factor(ff, prime)
+    dds = dd_factor(ff)
 
-    ret_val = Tuple{PolynomialSparse,Int}[]
+    ret_val = Tuple{PolynomialModP128,Int}[]
 
     for (k,dd) in enumerate(dds)
-        sp = dd_split(dd, k, prime)
-        sp = map((p)->(p ÷ leading(p).coeff)(prime),sp) #makes the polynomials inside the list sp, monic
+        sp = dd_split(dd, k)
+        sp = map((p)->(p ÷ leading(p).coeff)(f.prime),sp) #makes the polynomials inside the list sp, monic
         for mp in sp
             push!(ret_val, (mp, multiplicity(f_modp,mp,prime)) )
         end
@@ -53,7 +52,7 @@ end
 """
 Expand a factorization.
 """
-function expand_factorization(factorization::Vector{Tuple{PolynomialModP128,Int}})::PolynomialModP128
+function expand_factorization(factorization::Vector{Tuple{PolynomialModP128,Integer}})::PolynomialModP128
     length(factorization) == 1 && return first(factorization[1])^last(factorization[1])
     return *([first(tt)^last(tt) for tt in factorization]...)
 end
@@ -73,15 +72,15 @@ Distinct degree factorization.
 
 Given a square free polynomial `f` returns a list, `g` such that `g[k]` is a product of irreducible polynomials of degree `k` for `k` in 1,...,degree(f) ÷ 2, such that the product of the list (mod `prime`) is equal to `f` (mod `prime`).
 """
-function dd_factor(f::PolynomialModP128, prime::Int)::Array{PolynomialModP128}
+function dd_factor(f::PolynomialModP128)::Array{PolynomialModP128}
     x = x_polysparse128()
     w = deepcopy(x)
     g = Array{PolynomialModP128}(undef,degree(f)) #Array of polynomials indexed by degree
 
     #Looping over degrees
     for k in 1:degree(f)
-        w = rem(w^(prime), f)
-        g[k] = gcd(w - x, f) 
+        w = rem(PolynomialModP128(w^(f.prime), f.prime), f)
+        g[k] = gcd(w - PolynomialModP128(x,f.prime), f) 
         f = f ÷ g[k]
     end
 
@@ -100,12 +99,12 @@ Returns a list of irreducible polynomials of degree `d` so that the product of t
 function dd_split(f::PolynomialModP128, d::Int)::Vector{PolynomialModP128}
     degree(f) == d && return [f]
     degree(f) == 0 && return []
-    w = rand(PolynomialSparse, degree = d, monic = true)
-    w = PolynomialModP128(w,prime)
-    n_power = (prime^d-1) ÷ 2
-    g = gcd(w^(n_power) - PolynomialModP128(one(PolynomialSparse128),prime), f)
+    w = rand(PolynomialSparse128, degree = d, monic = true)
+    w = PolynomialModP128(w,f.prime)
+    n_power = (f.prime^d-1) ÷ 2
+    g = gcd(w^(n_power) - PolynomialModP128(one(PolynomialSparse128), f.prime), f)
     ḡ = f ÷ g # g\bar + [TAB]
-    #come back to this 
+
     return vcat(dd_split(g, d), dd_split(ḡ, d) )
 end
 

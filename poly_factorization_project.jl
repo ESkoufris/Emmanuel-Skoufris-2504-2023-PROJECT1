@@ -28,7 +28,7 @@ include("src/polynomial_modp.jl")
     include("src/basic_polynomial_operations/polynomial_sparse_gcd.jl")
 include("src/polynomial_factorization/factor.jl")
 include("src/polynomial_factorization/factor_sparse.jl")
-
+include("src/polynomial_factorization/factor_modp.jl")
 
 
 

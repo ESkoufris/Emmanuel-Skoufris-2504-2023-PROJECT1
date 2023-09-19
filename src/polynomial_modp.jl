@@ -220,6 +220,8 @@ function ^(f::PolynomialModP128, m::Integer)
     return ans
 end
 
+## Derivatives
+derivative(p::PolynomialModP128) = PolynomialModP128(derivative(p.polynomial), p.prime)
 
 ## division 
 ÷(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128((p1.polynomial ÷ p2)(p1.prime), p1.prime)
@@ -247,7 +249,7 @@ function gcd(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
 end
 
 # factorisation 
-factor(p::PolynomialModP128) = factor(p.polynomial, p.prime)
+#= factor(p::PolynomialModP128) = factor(p.polynomial, p.prime) =#
 
 # queries 
 iszero(p::PolynomialModP128) = iszero(p.polynomial)

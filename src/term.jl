@@ -155,4 +155,4 @@ end
 """
 Integer divide a term by an integer.
 """
-÷(t::Term, n::Int) = t ÷ Term(n,0)
+÷(t::Term, n::Integer) = t ÷ Term(n,0)

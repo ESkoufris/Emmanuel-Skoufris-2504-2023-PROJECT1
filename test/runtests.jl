@@ -54,5 +54,6 @@ repeated_squaring_test()
 include("factorization_test.jl")
 factor_test_poly()
 factor_test_poly_sparse()
+factor_test_poly_modp()
 
 
