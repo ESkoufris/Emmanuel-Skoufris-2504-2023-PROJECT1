@@ -134,9 +134,6 @@ end
 
 
 
-
-
-
 ## Implementation for PolynomialSparse128
 struct PolynomialModP128
     polynomial::PolynomialSparse128
@@ -155,6 +152,8 @@ end
 ## addition
 +(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128(p1.polynomial + p2, p1.prime)
 +(p1::PolynomialSparse128, p2::PolynomialModP128,)::PolynomialModP128 = PolynomialModP128(p2.polynomial + p1, p2.prime)
++(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(p.polynomial + n, p.prime)
++(n::Integer, p::PolynomialModP128)::PolynomialModP128 = PolynomialModP128(p.polynomial + n, p.prime)
 
 function +(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
     @assert p1.prime == p2.prime
@@ -182,8 +181,8 @@ function *(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
     return PolynomialModP128(p1.polynomial*p2.polynomial, p1.prime)
 end 
 
-## exponentiation - TO BE REPLACED
-^(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(p.polynomial^n, p.prime)
+## exponentiation - REPLACED
+#= ^(p::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128(p.polynomial^n, p.prime) =#
 
 ### better exponentiation
 
@@ -202,13 +201,13 @@ end
     return ans
 end =#
 
-function pow_mod_efficient(f::PolynomialModP128, m::Integer)
+function ^(f::PolynomialModP128, m::Integer)
     max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
 
     w = [f]
     
     for i in 1:max_pow
-        w = push!(w, w[end]^2)
+        w = push!(w, w[end]*w[end])
     end 
 
     ans =  PolynomialModP128(one(PolynomialSparse128), f.prime)  
@@ -224,7 +223,11 @@ end
 
 ## division 
 ÷(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128((p1.polynomial ÷ p2)(p1.prime), p1.prime)
-÷(p1::PolynomialSparse128, p2::PolynomialModP128,)::PolynomialModP128 = PolynomialModP128((p2.polynomial ÷ p1)(p2.prime), p2.prime)
+÷(p1::PolynomialSparse128, p2::PolynomialModP128)::PolynomialModP128 = PolynomialModP128((p2.polynomial ÷ p1)(p2.prime), p2.prime)
+
+÷(p1::PolynomialModP128, n::Integer)::PolynomialModP128 = PolynomialModP128((p1.polynomial ÷ n)(p1.prime), p1.prime)
+
+divide(num::PolynomialModP128, den::PolynomialModP128) = divide(num.polynomial, den.polynomial)(num.prime)
 
 function ÷(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
     @assert p1.prime == p2.prime
@@ -232,6 +235,7 @@ function ÷(p1::PolynomialModP128, p2::PolynomialModP128)::PolynomialModP128
 end 
 
 # remainder
+rem(num::PolynomialModP128, den::PolynomialModP128)  =  last(divide(num,den))
 
 # gcd
 gcd(p1::PolynomialModP128, p2::PolynomialSparse128)::PolynomialModP128 = PolynomialModP128(gcd(p1.polynomial, p2, p1.prime), p1.prime) 
@@ -296,3 +300,8 @@ function crt_multiply(a::PolynomialSparse128, b::PolynomialSparse128)
     end
     return smod(c.polynomial, M)
 end
+
+
+
+content(p::PolynomialModP128)::Int = euclid_alg(coeffs(p))
+prim_part(p::PolynomialModP128) = p ÷ content(p)

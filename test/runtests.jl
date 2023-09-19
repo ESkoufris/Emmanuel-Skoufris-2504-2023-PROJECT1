@@ -39,12 +39,15 @@ prod_derivative_test_poly_sparse128()
 ext_euclid_test_poly_sparse128()
 division_test_poly_sparse128()
 crt_multiply_test_poly_sparse()
+pow_mod_test()
+
 
 include("polynomial_modp_tests.jl")
 prod_test_poly_modp()
 division_test_poly_modp()
 ext_euclid_test_poly_modp()
-pow_mod_test()
+repeated_squaring_test()
+
 ####
 # Execute unit tests for polynomial factorization
 ####

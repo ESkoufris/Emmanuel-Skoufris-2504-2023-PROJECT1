@@ -202,3 +202,16 @@ function overflow_test(; n = 127)
 end
 
 
+"""
+Test exponentiation modulo a prime number
+"""
+
+function pow_mod_test(;prime = 103, N =20)
+    p_base = rand(PolynomialSparse128)
+    p = one(PolynomialSparse128)
+    for k in 1:N
+        p = mod(p_base*p, prime)
+        @assert pow_mod(p_base,k,prime) == p
+    end 
+    println("pow_mod_test - PASSED")
+end 

@@ -98,10 +98,12 @@ end
 Test exponentiation using repeated squaring
 """
 
-function pow_mod_test(;prime::Int=103, N::Int = 10)
-    p = rand(PolynomialSparse128)
+function repeated_squaring_test(;prime::Int=103, N::Int = 20)
+    p_base = rand(PolynomialSparse128)
+    p = PolynomialModP128(one(PolynomialSparse128), prime)
     for k in 1:N
-        @assert pow_mod_efficient(PolynomialModP128(p, prime), k) == PolynomialModP128(p, prime)^k
+        p *= p_base
+        @assert PolynomialModP128(p_base, prime)^k == p
     end 
-    println("pow_mod_test - PASSED")
+    println("repeated_squaring_test - PASSED")
 end 

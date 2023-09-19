@@ -55,7 +55,7 @@ function ^(p::PolynomialSparse128, n::Int)
     return out
 end
 
-function pow_mod_efficient(f::PolynomialSparse128, m::Integer, p::Integer)
+#= function pow_mod_efficient(f::PolynomialSparse128, m::Integer, p::Integer)
     max_pow = floor(Int, log2(m)) # computing the position of the leftmost bit.
 
     w = [f]
@@ -72,4 +72,4 @@ function pow_mod_efficient(f::PolynomialSparse128, m::Integer, p::Integer)
         end
     end
     return ans
-end
+end =#
