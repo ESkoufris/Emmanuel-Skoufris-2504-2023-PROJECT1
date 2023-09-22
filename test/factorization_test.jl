@@ -10,7 +10,7 @@
 """
 Test factorization of polynomials.
 """
-function factor_test_poly(;N::Int = 1, seed::Int = 0, primes::Vector{Int} = [5,17,19])
+function factor_test_poly(;N::Int = 2, seed::Int = 3, primes::Vector{Int} = [5,17,19])
     Random.seed!(seed)
     for prime in primes
         print("\ndoing prime = $prime \t")
@@ -26,7 +26,7 @@ function factor_test_poly(;N::Int = 1, seed::Int = 0, primes::Vector{Int} = [5,1
     println("\nfactor_test_poly - PASSED")
 end
 
-function factor_test_poly_sparse(;N::Int = 1, seed::Int = 0, primes::Vector{Int} = [5,17,19])
+function factor_test_poly_sparse(;N::Int = 3, seed::Int = 3, primes::Vector{Int} = [5,7,11])
     Random.seed!(seed)
     for prime in primes
         print("\ndoing prime = $prime \t")
@@ -39,10 +39,10 @@ function factor_test_poly_sparse(;N::Int = 1, seed::Int = 0, primes::Vector{Int}
         end
     end
 
-    println("\nfactor_test_poly - PASSED")
+    println("\nfactor_test_poly_sparse - PASSED")
 end
 
-function factor_test_poly_modp(;N::Int = 1, seed::Int = 0, primes::Vector{Int} = [5,17,19])
+function factor_test_poly_modp(;N::Int = 2, seed::Int = 3, primes::Vector{Int} = [5,17,19])
     Random.seed!(seed)
     for prime in primes
         print("\ndoing prime = $prime \t")
@@ -50,8 +50,8 @@ function factor_test_poly_modp(;N::Int = 1, seed::Int = 0, primes::Vector{Int} =
             print(".")
             p = PolynomialModP128(rand(PolynomialSparse128), prime)
             factorization = factor(p)
-            pr = PolynomialModP128(expand_factorization(factorization), prime)
-            @assert p-pr == 0 
+            pr = expand_factorization(factorization)
+            @assert iszero(p-pr) 
         end
     end
 

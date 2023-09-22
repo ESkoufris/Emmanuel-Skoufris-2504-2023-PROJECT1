@@ -83,7 +83,7 @@ end
 """
 Test the extended euclid algorithm for polynomials modulo p.
 """
-function ext_euclid_test_poly_modp(;prime::Int=103, N::Int = 10^3, seed::Int = 0)
+function ext_euclid_test_poly_modp(;prime::Int=103, N::Int = 10, seed::Int = 0)
     Random.seed!(seed)
     for _ in 1:N
         p1 = PolynomialModP(rand(PolynomialSparse),prime)

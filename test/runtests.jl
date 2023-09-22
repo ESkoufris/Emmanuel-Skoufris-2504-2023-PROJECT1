@@ -56,4 +56,3 @@ factor_test_poly()
 factor_test_poly_sparse()
 factor_test_poly_modp()
 
-

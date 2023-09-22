@@ -52,7 +52,7 @@ end
 """
 Expand a factorization.
 """
-function expand_factorization(factorization::Vector{Tuple{PolynomialSparse,Int}})::PolynomialSparse 
+function expand_factorization(factorization::Vector{Tuple{PolynomialSparse,Integer}})::PolynomialSparse 
     length(factorization) == 1 && return first(factorization[1])^last(factorization[1])
     return *([first(tt)^last(tt) for tt in factorization]...)
 end

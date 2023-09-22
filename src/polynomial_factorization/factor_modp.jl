@@ -37,14 +37,14 @@ function factor(f::PolynomialModP128)::Vector{Tuple{PolynomialModP128,Integer}}
 
     for (k,dd) in enumerate(dds)
         sp = dd_split(dd, k)
-        sp = map((p)->(p ÷ leading(p).coeff)(f.prime),sp) #makes the polynomials inside the list sp, monic
+        sp = map((p)->(p ÷ leading(p).coeff),sp) #makes the polynomials inside the list sp, monic
         for mp in sp
-            push!(ret_val, (mp, multiplicity(f_modp,mp,prime)) )
+            push!(ret_val, (mp, multiplicity(f,mp)) )
         end
     end
 
     #Append the leading coefficient as well
-    push!(ret_val, (leading(f_modp).coeff* one(PolynomialSparse), 1) )
+    push!(ret_val, (leading(f).coeff*PolynomialModP128(one(PolynomialSparse128), f.prime), 1) )
 
     return ret_val
 end
@@ -60,7 +60,7 @@ end
 """
 Compute the number of times g divides f
 """
-function multiplicity(f::PolynomialSparse, g::PolynomialSparse)::Int
+function multiplicity(f::PolynomialModP128, g::PolynomialModP128)::Int
     @assert f.prime == g.prime 
     degree(gcd(f, g)) == 0 && return 0
     return 1 + multiplicity(f ÷ g, g)
@@ -79,7 +79,7 @@ function dd_factor(f::PolynomialModP128)::Array{PolynomialModP128}
 
     #Looping over degrees
     for k in 1:degree(f)
-        w = rem(PolynomialModP128(w^(f.prime), f.prime), f)
+        w = rem(PolynomialModP128(w, f.prime)^f.prime, f)
         g[k] = gcd(w - PolynomialModP128(x,f.prime), f) 
         f = f ÷ g[k]
     end
@@ -100,7 +100,7 @@ function dd_split(f::PolynomialModP128, d::Int)::Vector{PolynomialModP128}
     degree(f) == d && return [f]
     degree(f) == 0 && return []
     w = rand(PolynomialSparse128, degree = d, monic = true)
-    w = PolynomialModP128(w,f.prime)
+    w = PolynomialModP128(w, f.prime)
     n_power = (f.prime^d-1) ÷ 2
     g = gcd(w^(n_power) - PolynomialModP128(one(PolynomialSparse128), f.prime), f)
     ḡ = f ÷ g # g\bar + [TAB]
